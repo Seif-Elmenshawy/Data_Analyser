@@ -101,170 +101,171 @@ class Data_Anlyzer(App):
         sortchoice.display=False
         null.display=False
         search_container.display=False
-    # Main buttons
-        if event.button.id=="whole":
-            self.clear()
-            label.update("The data is below")
-            label.display=True
-            output.update(str(self.df))
-            output.display=True
-            label2.update("Choose the next process")
-            label2.display=True
-            qs11.display=True
-            qs12.display=True
-        elif event.button.id =="describe":
-            self.clear()
-            label.update("The data is described below")
-            output.update(str(self.df.describe()))
-            output.display=True        
-            label2.update("Choose a process")
-            label2.display=True
-            qs11.display= True
-            qs12.display=True
-        elif event.button.id=="sort":
-            self.clear()
-            label.update("Choose your sorting way")
-            label.display=True
-            sorting.display=True
-            label2.display=False
-        
-        elif event.button.id == "search":
-            self.clear()
-            # Just show the search box
-            self.query_one("#searchinput", Vertical).display = True
-            self.query_one("#menu_label", Static).update("🔍 Enter a value to search for:")
-            self.query_one("#menu_label", Static).display = True
-
-
-
-        
-        elif event.button.id=="nullcheck":
-            self.clear()
-            if self.df.isnull().values.any():
-                output.update("missing data was found, What to do")
+        if self.df is not None
+            if event.button.id=="whole":
+                self.clear()
+                label.update("The data is below")
+                label.display=True
+                output.update(str(self.df))
                 output.display=True
-                null.display=True
-            else:
-                output.update("No missing data found")
+                label2.update("Choose the next process")
+                label2.display=True
+                qs11.display=True
+                qs12.display=True
+            elif event.button.id =="describe":
+                self.clear()
+                label.update("The data is described below")
+                output.update(str(self.df.describe()))
+                output.display=True        
+                label2.update("Choose a process")
+                label2.display=True
+                qs11.display= True
+                qs12.display=True
+            elif event.button.id=="sort":
+                self.clear()
+                label.update("Choose your sorting way")
+                label.display=True
+                sorting.display=True
+                label2.display=False
+            
+            elif event.button.id == "search":
+                self.clear()
+                # Just show the search box
+                self.query_one("#searchinput", Vertical).display = True
+                self.query_one("#menu_label", Static).update("🔍 Enter a value to search for:")
+                self.query_one("#menu_label", Static).display = True
+    
+    
+    
+            
+            elif event.button.id=="nullcheck":
+                self.clear()
+                if self.df.isnull().values.any():
+                    output.update("missing data was found, What to do")
+                    output.display=True
+                    null.display=True
+                else:
+                    output.update("No missing data found")
+                    output.display=True
+                    label2.update("Choose a process")
+                    label2.display=True
+                    qs11.display= True
+                    qs12.display=True
+            elif event.button.id == "save":
+                self.clear()
+    
+                sortchoice.display = True
+                label2.display = True
+                qs11.display = True
+                qs12.display = True
+    
+                if not self.file_path:
+                    sortchoice.update(" No file loaded to save.")
+                    return
+    
+                file_root, ext = os.path.splitext(self.file_path)
+                new_path = f"{file_root}_updated{ext}"
+    
+                try:
+                    if self.file_ext == ".csv":
+                        self.df.to_csv(new_path, index=False)
+                    elif self.file_ext == ".xlsx":
+                        self.df.to_excel(new_path, index=False, engine="openpyxl")
+                    elif self.file_ext == ".json":
+                        self.df.to_json(new_path, orient="records", indent=4)
+                    else:
+                        sortchoice.update("Unsupported file format.")
+                        return
+    
+                    sortchoice.update(f"✅ Data saved successfully to: {new_path}")
+                except Exception as e:
+                    sortchoice.update(f"Data was not saved {e}")
+    
+    
+        #secondry buttons
+            elif event.button.id=="ascend":
+                self.clear()
+                sortchoice.update("The data is sorted ascendingly below:")
+                sortchoice.display=True
+                self.df = self.df.sort_values(by=list(self.df.columns), ascending=True)
+                output.update(str(self.df))
+                output.display=True
+                sorting.display=False
+                label.display=False
+                label2.update("Choose a process")
+                label2.display=True
+                qs11.display= True
+                qs12.display=True
+            elif event.button.id=="descend":
+                self.clear()
+                sortchoice.update("The data is sorted descendingly below:")
+                sortchoice.display=True
+                self.df = self.df.sort_values(by=list(self.df.columns), ascending=False)
+                output.update(str(self.df))
+                output.display=True
+                sorting.display=False
+                label.display=False
+                label2.update("Choose a process")
+                label2.display=True
+                qs11.display= True
+                qs12.display=True
+            elif event.button.id=="fill":
+                self.clear()
+                sortchoice.update("Missing data is now filled with zeros")
+                sortchoice.display=True
+                null.display=False
+                self.df=self.df.fillna(0, inplace=True)
+                output.update(str(self.df))
                 output.display=True
                 label2.update("Choose a process")
                 label2.display=True
                 qs11.display= True
                 qs12.display=True
-        elif event.button.id == "save":
-            self.clear()
-
-            sortchoice.display = True
-            label2.display = True
-            qs11.display = True
-            qs12.display = True
-
-            if not self.file_path:
-                sortchoice.update(" No file loaded to save.")
-                return
-
-            file_root, ext = os.path.splitext(self.file_path)
-            new_path = f"{file_root}_updated{ext}"
-
-            try:
-                if self.file_ext == ".csv":
-                    self.df.to_csv(new_path, index=False)
-                elif self.file_ext == ".xlsx":
-                    self.df.to_excel(new_path, index=False, engine="openpyxl")
-                elif self.file_ext == ".json":
-                    self.df.to_json(new_path, orient="records", indent=4)
+            elif event.button.id=="remove":
+                self.clear()
+                sortchoice.update("Rows with missing data is now removed")
+                sortchoice.display=True
+                null.display=False
+                self.df=self.df.dropna()
+                output.update(str(self.df))
+                output.display=True
+                label2.update("Choose a process")
+                label2.display=True
+                qs11.display= True
+                qs12.display=True
+            elif event.button.id == "submit_search":
+                self.clear()
+                input_widget = self.query_one("#input", Input)
+                output = self.query_one("#output", Static)
+                search_value = input_widget.value.strip()
+    
+                if not search_value:
+                    output.update("❌ Search value cannot be empty.")
                 else:
-                    sortchoice.update("Unsupported file format.")
-                    return
-
-                sortchoice.update(f"✅ Data saved successfully to: {new_path}")
-            except Exception as e:
-                sortchoice.update(f"Data was not saved {e}")
-
-
-    #secondry buttons
-        elif event.button.id=="ascend":
-            self.clear()
-            sortchoice.update("The data is sorted ascendingly below:")
-            sortchoice.display=True
-            self.df = self.df.sort_values(by=list(self.df.columns), ascending=True)
-            output.update(str(self.df))
-            output.display=True
-            sorting.display=False
-            label.display=False
-            label2.update("Choose a process")
-            label2.display=True
-            qs11.display= True
-            qs12.display=True
-        elif event.button.id=="descend":
-            self.clear()
-            sortchoice.update("The data is sorted descendingly below:")
-            sortchoice.display=True
-            self.df = self.df.sort_values(by=list(self.df.columns), ascending=False)
-            output.update(str(self.df))
-            output.display=True
-            sorting.display=False
-            label.display=False
-            label2.update("Choose a process")
-            label2.display=True
-            qs11.display= True
-            qs12.display=True
-        elif event.button.id=="fill":
-            self.clear()
-            sortchoice.update("Missing data is now filled with zeros")
-            sortchoice.display=True
-            null.display=False
-            self.df=self.df.fillna(0, inplace=True)
-            output.update(str(self.df))
-            output.display=True
-            label2.update("Choose a process")
-            label2.display=True
-            qs11.display= True
-            qs12.display=True
-        elif event.button.id=="remove":
-            self.clear()
-            sortchoice.update("Rows with missing data is now removed")
-            sortchoice.display=True
-            null.display=False
-            self.df=self.df.dropna()
-            output.update(str(self.df))
-            output.display=True
-            label2.update("Choose a process")
-            label2.display=True
-            qs11.display= True
-            qs12.display=True
-        elif event.button.id == "submit_search":
-            self.clear()
-            input_widget = self.query_one("#input", Input)
-            output = self.query_one("#output", Static)
-            search_value = input_widget.value.strip()
-
-            if not search_value:
-                output.update("❌ Search value cannot be empty.")
-            else:
-                # Search case-insensitively across all columns as strings
-                mask = self.df.astype(str).apply(
-                lambda row: row.str.contains(search_value, case=False, na=False),
-                axis=1)
-
-                results = self.df[mask.any(axis=1)]
-
-                if not results.empty:
-                    output.update(str(results))
-                else:
-                    output.update("No match found.")
-
-            output.display = True
-            self.query_one("#searchinput", Vertical).display = False
-            label = self.query_one("#menu_label", Static)
-            label.update("Rows including the value you searched are below:")
-            label.display = True
-
-            self.query_one("#again", Static).update("Choose a process")
-            self.query_one("#again", Static).display = True
-            self.query_one("#qs1_1", Horizontal).display = True
-            self.query_one("#qs1_2", Horizontal).display = True
-
+                    # Search case-insensitively across all columns as strings
+                    mask = self.df.astype(str).apply(
+                    lambda row: row.str.contains(search_value, case=False, na=False),
+                    axis=1)
+    
+                    results = self.df[mask.any(axis=1)]
+    
+                    if not results.empty:
+                        output.update(str(results))
+                    else:
+                        output.update("No match found.")
+    
+                output.display = True
+                self.query_one("#searchinput", Vertical).display = False
+                label = self.query_one("#menu_label", Static)
+                label.update("Rows including the value you searched are below:")
+                label.display = True
+    
+                self.query_one("#again", Static).update("Choose a process")
+                self.query_one("#again", Static).display = True
+                self.query_one("#qs1_1", Horizontal).display = True
+                self.query_one("#qs1_2", Horizontal).display = True
+        else:
+            output.update("Data is not uploaded")
             
 
     
