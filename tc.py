@@ -101,7 +101,7 @@ class Data_Anlyzer(App):
         sortchoice.display=False
         null.display=False
         search_container.display=False
-        if self.df is not None
+        if self.df is not None:
             if event.button.id=="whole":
                 self.clear()
                 label.update("The data is below")
