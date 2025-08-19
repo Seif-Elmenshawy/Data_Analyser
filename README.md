@@ -39,3 +39,6 @@
    ```bash
    python tc.py
 5. In the input, type the path of your file that contains the data set( if you do not have one, you can use the one attached).
+
+   ##Or
+you can install the file named "tc" and run it directly
